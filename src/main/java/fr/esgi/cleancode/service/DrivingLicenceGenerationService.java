@@ -1,15 +1,19 @@
 package fr.esgi.cleancode.service;
 
 
+import fr.esgi.cleancode.database.InMemoryDatabase;
 import fr.esgi.cleancode.exception.InvalidDriverSocialSecurityNumberException;
 import fr.esgi.cleancode.model.DrivingLicence;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DrivingLicenceGenerationService {
 
-    public void validateDriverSocialSecurityNumber(String driverSocialSecurityNumber) {
+    private final InMemoryDatabase database = InMemoryDatabase.getInstance();
+
+    public void validateDriverSocialSecurityNumber(String driverSocialSecurityNumber) throws InvalidDriverSocialSecurityNumberException {
         if (driverSocialSecurityNumber == null) {
             throw new InvalidDriverSocialSecurityNumberException("Invalid Social Security Number is null");
         }
@@ -26,5 +30,12 @@ public class DrivingLicenceGenerationService {
     }
 
     public DrivingLicence createNewDrivingLicence(String driverSocialSecurityNumber) {
+        this.validateDriverSocialSecurityNumber(driverSocialSecurityNumber);
+        UUID drivingLicenceId = new DrivingLicenceIdGenerationService().generateNewDrivingLicenceId();
+        DrivingLicence drivingLicence = DrivingLicence.builder()
+                .id(drivingLicenceId)
+                .driverSocialSecurityNumber(driverSocialSecurityNumber)
+                .build();
+        return database.save(drivingLicenceId, drivingLicence);
     }
 }
