@@ -13,7 +13,7 @@ class DrivingLicenceGenerationServiceTest {
     private final DrivingLicenceGenerationService service = new DrivingLicenceGenerationService();
 
     @Test
-    void should_generate_valid_driverSocialSecurityNumber() throws InvalidDriverSocialSecurityNumberException {
+    void shouldGenerateValidDriverSocialSecurityNumber() throws InvalidDriverSocialSecurityNumberException {
         try{
             service.validateDriverSocialSecurityNumber(null);
             fail("Nothing thrown");
@@ -51,7 +51,7 @@ class DrivingLicenceGenerationServiceTest {
     }
 
     @Test
-    void Should_Generate_New_DrivingLicence_With_Default_Values() {
+    void shouldGenerateNewDrivingLicenceWithDefaultValues() {
         final var drivingLicence = service.createNewDrivingLicence("198064562548457");
         assertThat(drivingLicence.getAvailablePoints()).isEqualTo(12);
     }
