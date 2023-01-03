@@ -2,6 +2,7 @@ package fr.esgi.cleancode.service;
 
 
 import fr.esgi.cleancode.exception.InvalidDriverSocialSecurityNumberException;
+import fr.esgi.cleancode.model.DrivingLicence;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,4 +25,6 @@ public class DrivingLicenceGenerationService {
         }
     }
 
+    public DrivingLicence createNewDrivingLicence(String driverSocialSecurityNumber) {
+    }
 }
