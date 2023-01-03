@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,10 +43,9 @@ public class DrivingLicenceRemovePointServiceTest {
 
     @Test
     void shouldThrowWhenDrivingLicenceNotFound() throws ResourceNotFoundException {
-        when(database.findById(drivingLicenceId)).thenReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotFoundException.class,
                 () -> {
-            service.removePoints(drivingLicenceId, 6);
+            service.removePoints(UUID.randomUUID(), 6);
         });
     }
 
@@ -56,14 +56,15 @@ public class DrivingLicenceRemovePointServiceTest {
                 () -> {
             service.removePoints(drivingLicenceId, expectedDrivingLicence.getAvailablePoints()+1);
         });
-
         Assertions.assertEquals("You can't have less than 0 points on your driving licence !", illegalArgumentException.getMessage());
     }
 
 
     @Test
     void shouldRemoveGivenPointsToDrivingLicence() {
-        when(database.findById(drivingLicenceId)).thenReturn(Optional.ofNullable(expectedDrivingLicence));
+        when(drivingLicenceFinderService.findById(drivingLicenceId)).thenReturn(Optional.ofNullable(expectedDrivingLicence));
+        expectedDrivingLicence = expectedDrivingLicence.withAvailablePoints(6);
+        when(database.save(drivingLicenceId, expectedDrivingLicence)).thenReturn(expectedDrivingLicence.withAvailablePoints(6));
         DrivingLicence currentDrivingLicence = service.removePoints(drivingLicenceId, 6);
         Assertions.assertEquals(expectedDrivingLicence.getAvailablePoints(), currentDrivingLicence.getAvailablePoints());
     }
