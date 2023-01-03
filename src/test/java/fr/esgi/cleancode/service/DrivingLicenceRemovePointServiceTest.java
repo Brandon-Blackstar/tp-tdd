@@ -40,7 +40,6 @@ public class DrivingLicenceRemovePointServiceTest {
                 .build();
     }
 
-
     @Test
     void shouldThrowWhenDrivingLicenceNotFound() throws ResourceNotFoundException {
         when(database.findById(drivingLicenceId)).thenReturn(Optional.empty());
@@ -49,6 +48,18 @@ public class DrivingLicenceRemovePointServiceTest {
             service.removePoints(drivingLicenceId, 6);
         });
     }
+
+    @Test
+    void shouldNotRemovePointsWhenUnderZero() throws IllegalArgumentException {
+        when(drivingLicenceFinderService.findById(drivingLicenceId)).thenReturn(Optional.ofNullable(expectedDrivingLicence));
+        IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> {
+            service.removePoints(drivingLicenceId, expectedDrivingLicence.getAvailablePoints()+1);
+        });
+
+        Assertions.assertEquals("You can't have less than 0 points on your driving licence !", illegalArgumentException.getMessage());
+    }
+
 
     @Test
     void shouldRemoveGivenPointsToDrivingLicence() {
